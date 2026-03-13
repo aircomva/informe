@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#4472c4">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="AIRCOMVA">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <title>Informe de Mantenimiento - AIRCOMVA S.L.</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Calibri, Arial, sans-serif; font-size: 9pt; color: #333; background: #f5f5f5; }
+        .page {
+            width: 210mm; margin: 10mm auto; background: #fff;
+            padding: 8mm 10mm; box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 2px; }
+        td, th { border: 1px solid #999; padding: 2px 4px; vertical-align: middle; font-size: 9pt; }
+
+        .header-row { background: #b4c6e7; text-align: center; font-weight: bold; }
+        .section-header { background: #d9e2f3; text-align: center; font-weight: bold; }
+        .sub-header { background: #e2efda; text-align: center; font-weight: bold; font-size: 8.5pt; }
+        .label { background: #fff; font-size: 8.5pt; }
+        .input-cell { background: #fff; min-width: 40px; }
+        .no-border { border: none; }
+
+        .btn-borrar-todo {
+            position: fixed; top: 12px; right: 12px; z-index: 1000;
+            padding: 6px 16px; font-size: 9pt; font-family: Calibri, Arial, sans-serif;
+            background: #e74c3c; color: #fff; border: none; border-radius: 4px;
+            cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+        }
+        .btn-borrar-todo:hover { background: #c0392b; }
+
+        .title-area {
+            background: #4472c4; color: #fff; text-align: center;
+            font-size: 14pt; font-weight: bold; padding: 12px; height: 50px;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .subtitle { background: #d9e2f3; text-align: center; font-size: 9pt; padding: 3px; }
+        .address { background: #d9e2f3; text-align: center; font-size: 7.5pt; padding: 2px; }
+
+        .client-table td { font-size: 10pt; }
+        .client-table td:first-child { width: 20%; font-weight: bold; background: #f2f2f2; }
+        .client-table td:nth-child(2) { width: 80%; }
+        .client-table input[type="text"] { font-size: 10pt; }
+
+        .check-table td { text-align: center; }
+        .check-table td:first-child, .check-table td:nth-child(4) { text-align: left; width: 23%; }
+        .check-table td:nth-child(2), .check-table td:nth-child(3),
+        .check-table td:nth-child(5), .check-table td:nth-child(6), .check-table td:nth-child(7) { width: 5%; }
+
+        input[type="text"] {
+            border: none; border-bottom: 1px dotted #999; width: 100%;
+            font-family: Calibri, Arial, sans-serif; font-size: 9pt;
+            padding: 1px 2px; background: transparent;
+        }
+        input[type="radio"] { transform: scale(1.1); cursor: pointer; }
+
+        textarea {
+            width: 100%; border: 1px solid #999; font-family: Calibri, Arial, sans-serif;
+            font-size: 9pt; padding: 4px; resize: vertical;
+        }
+
+        .obs-area { min-height: 120px; border: 1px solid #999; padding: 4px; }
+
+        .equipo-table td:first-child { width: 40%; font-weight: bold; background: #f2f2f2; }
+        .equipo-table td:nth-child(2) { width: 60%; }
+
+        .insp-table td:first-child { width: 40%; font-weight: bold; }
+        .insp-table td:nth-child(2) { width: 15%; }
+
+        .legal { margin-top: 4px; font-size: 6pt; color: #555; line-height: 1.3; }
+
+        .resultado { font-weight: bold; font-size: 10pt; margin-top: 8px; }
+        .firma { margin-top: 30px; text-align: left; font-weight: bold; }
+
+        .btn-imprimir {
+            position: fixed; top: 12px; right: 170px; z-index: 1000;
+            padding: 6px 16px; font-size: 9pt; font-family: Calibri, Arial, sans-serif;
+            background: #2980b9; color: #fff; border: none; border-radius: 4px;
+            cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+        }
+        .btn-imprimir:hover { background: #1a6da0; }
+
+        @media print {
+            @page { size: A4 portrait; margin: 3mm; }
+            body { background: #fff; font-size: 7pt; }
+            .page { box-shadow: none; margin: 0; padding: 2mm 3mm; width: 100%; }
+            .page-break { page-break-before: always; }
+            .btn-borrar-todo, .btn-imprimir { display: none !important; }
+            table { margin-bottom: 0; }
+            td, th { padding: 0.5px 2px; font-size: 7pt; line-height: 1.1; }
+            .title-area { height: 24px; font-size: 10pt; padding: 2px; }
+            .subtitle { font-size: 7pt; padding: 0; }
+            .address { font-size: 6pt; padding: 0; }
+            .section-header { font-size: 7pt; padding: 1px; }
+            .sub-header { font-size: 6.5pt; }
+            .label { font-size: 6.5pt; }
+            .client-table td { padding: 0.5px 2px; }
+            input[type="text"] { font-size: 7pt; border-bottom: none; padding: 0; }
+            input[type="radio"] { transform: scale(0.7); margin: 0; }
+            textarea { min-height: 50px; height: 50px; font-size: 7pt; border: 1px solid #ccc; padding: 2px; }
+            .equipo-table td { padding: 0.5px 2px; font-size: 6.5pt; }
+            .insp-table td { padding: 0.5px 2px; font-size: 6.5pt; }
+            canvas { max-height: 80px; }
+            button[onclick="limpiarFirma()"] { display: none !important; }
+            .firma-section { margin-top: 5px !important; }
+            .page {
+                max-height: 284mm; overflow: hidden;
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<button type="button" class="btn-imprimir" onclick="window.print()">Imprimir / PDF</button>
+<button type="button" class="btn-borrar-todo" onclick="borrarFormulario()">Borrar formulario</button>
+
+<div class="page">
+
+    <!-- TÍTULO -->
+    <table style="margin-bottom: 2px;">
+        <tr>
+            <td style="width: 30%; border: 1px solid #999; padding: 6px; vertical-align: top; font-size: 8pt; line-height: 1.4;">
+                <strong>AIRCOMVA S.L.</strong><br>
+                CIF: B47787692<br>
+                Dirección: C. Caoba, 2, 47193 La Cistérniga
+            </td>
+            <td style="width: 40%; border: 1px solid #999; background: #4472c4; color: #fff; text-align: center; vertical-align: middle; font-size: 14pt; font-weight: bold; padding: 10px;">
+                INFORME DE MANTENIMIENTO
+            </td>
+            <td style="width: 30%; border: 1px solid #999; padding: 6px; vertical-align: top; font-size: 8pt; line-height: 1.6;">
+                INFORME Nº: <input type="text" name="informe_n" style="width: 55%;"><br>
+                ALBARÁN: <input type="text" name="albaran" style="width: 60%;"><br>
+                PARTE: <input type="text" name="parte" style="width: 65%;">
+            </td>
+        </tr>
+    </table>
+
+    <!-- DATOS CLIENTE -->
+    <table class="client-table" style="margin-top: 4px;">
+        <tr><td>CLIENTE</td><td><input type="text" name="cliente" id="src_cliente" oninput="document.getElementById('dup_titular').value=this.value"></td></tr>
+        <tr><td>DIRECCIÓN</td><td><input type="text" name="direccion" id="src_direccion" oninput="document.getElementById('dup_emplazamiento').value=this.value"></td></tr>
+        <tr><td>PERSONA DE CONTACTO</td><td><input type="text" name="contacto" id="src_contacto" oninput="document.getElementById('dup_usuario').value=this.value"></td></tr>
+        <tr><td>FECHA INTERVENCIÓN</td><td><input type="text" name="fecha"></td></tr>
+        <tr><td>TÉCNICO</td><td><input type="text" name="tecnico"></td></tr>
+    </table>
+
+    <!-- DATOS COMPRESOR / PARÁMETROS -->
+    <table style="margin-top: 4px;">
+        <tr class="section-header"><td colspan="6">DATOS COMPRESOR / PARÁMETROS</td></tr>
+        <tr>
+            <td class="label">MARCA/MODELO:</td>
+            <td colspan="2"><input type="text" name="marca_modelo" id="src_marca_modelo" oninput="document.getElementById('dup_fab_marca_modelo').value=this.value"></td>
+            <td class="label">Nº SERIE:</td>
+            <td colspan="2"><input type="text" name="n_serie" id="src_n_serie" oninput="document.getElementById('dup_n_fab_serie').value=this.value"></td>
+        </tr>
+        <tr>
+            <td class="label">HORAS MARCHA:</td>
+            <td colspan="2"><input type="text" name="horas_marcha"></td>
+            <td class="label">PRESIÓN MÁXIMA:</td>
+            <td colspan="2"><input type="text" name="presion_max"></td>
+        </tr>
+        <tr>
+            <td class="label">Tª AMBIENTE:</td>
+            <td colspan="2"><input type="text" name="t_ambiente"></td>
+            <td class="label">PRESIÓN MÍNIMA:</td>
+            <td colspan="2"><input type="text" name="presion_min"></td>
+        </tr>
+        <tr>
+            <td class="label"></td>
+            <td colspan="2"></td>
+            <td class="label">Tª FUNCIONAMIENTO:</td>
+            <td colspan="2"><input type="text" name="t_func"></td>
+        </tr>
+    </table>
+
+    <!-- MANTENIMIENTO -->
+    <table class="check-table" style="margin-top: 4px;">
+        <tr class="section-header"><td colspan="7">MANTENIMIENTO</td></tr>
+        <tr class="sub-header">
+            <td>SUSTITUCIÓN</td><td>SI</td><td>NO</td>
+            <td>REVISIÓN</td><td>OK</td><td>MAL</td><td>SUST</td>
+        </tr>
+        <tr>
+            <td class="label">CAMBIO FILTRO AIRE</td><td><input type="radio" name="m1a" value="si"></td><td><input type="radio" name="m1a" value="no"></td>
+            <td class="label">FILTROS HABITÁCULO</td><td><input type="radio" name="m1b" value="ok"></td><td><input type="radio" name="m1b" value="mal"></td><td><input type="radio" name="m1b" value="sust"></td>
+        </tr>
+        <tr>
+            <td class="label">CAMBIO FILTRO ACEITE</td><td><input type="radio" name="m2a" value="si"></td><td><input type="radio" name="m2a" value="no"></td>
+            <td class="label">COMPROBACIÓN NIVELES</td><td><input type="radio" name="m2b" value="ok"></td><td><input type="radio" name="m2b" value="mal"></td><td><input type="radio" name="m2b" value="sust"></td>
+        </tr>
+        <tr>
+            <td class="label">CAMBIO SEPARADOR</td><td><input type="radio" name="m3a" value="si"></td><td><input type="radio" name="m3a" value="no"></td>
+            <td class="label">CAMBIO CORREA</td><td><input type="radio" name="m3b" value="ok"></td><td><input type="radio" name="m3b" value="mal"></td><td><input type="radio" name="m3b" value="sust"></td>
+        </tr>
+        <tr>
+            <td class="label">CAMBIO ACEITE</td><td><input type="radio" name="m4a" value="si"></td><td><input type="radio" name="m4a" value="no"></td>
+            <td class="label"></td><td></td><td></td><td></td>
+        </tr>
+    </table>
+
+    <!-- SISTEMA REGULACIÓN / TRANSMISIÓN -->
+    <table class="check-table" style="margin-top: 4px;">
+        <tr class="section-header"><td colspan="7">SISTEMA REGULACIÓN / TRANSMISIÓN</td></tr>
+        <tr class="sub-header">
+            <td>ESTADO</td><td>OK</td><td>KO</td>
+            <td>VERIFICACIÓN</td><td>OK</td><td>MAL</td><td>SUST</td>
+        </tr>
+        <tr>
+            <td class="label">CUERPO DE ASPIRACIÓN</td><td><input type="radio" name="r1a" value="si"></td><td><input type="radio" name="r1a" value="no"></td>
+            <td class="label">KIT PILOTAJE Y DESCARGA</td><td><input type="radio" name="r1b" value="ok"></td><td><input type="radio" name="r1b" value="mal"></td><td><input type="radio" name="r1b" value="sust"></td>
+        </tr>
+        <tr>
+            <td class="label">CORREAS</td><td><input type="radio" name="r2a" value="si"></td><td><input type="radio" name="r2a" value="no"></td>
+            <td class="label">CAMBIO CORREAS</td><td><input type="radio" name="r2b" value="ok"></td><td><input type="radio" name="r2b" value="mal"></td><td><input type="radio" name="r2b" value="sust"></td>
+        </tr>
+        <tr>
+            <td class="label">ACOPLAMIENTO</td><td><input type="radio" name="r3a" value="si"></td><td><input type="radio" name="r3a" value="no"></td>
+            <td class="label">ACOPLAMIENTO</td><td><input type="radio" name="r3b" value="ok"></td><td><input type="radio" name="r3b" value="mal"></td><td><input type="radio" name="r3b" value="sust"></td>
+        </tr>
+        <tr>
+            <td class="label">MOTOR</td><td><input type="radio" name="r4a" value="si"></td><td><input type="radio" name="r4a" value="no"></td>
+            <td class="label">ENGRASE</td><td><input type="radio" name="r4b" value="ok"></td><td><input type="radio" name="r4b" value="mal"></td><td><input type="radio" name="r4b" value="sust"></td>
+        </tr>
+    </table>
+
+    <!-- SISTEMA LUBRICACIÓN / AGUA -->
+    <table class="check-table" style="margin-top: 4px;">
+        <tr class="section-header"><td colspan="7">SISTEMA LUBRICACIÓN / AGUA</td></tr>
+        <tr class="sub-header">
+            <td>ESTADO</td><td>OK</td><td>KO</td>
+            <td>LIMPIEZA Y COMPROBACIONES</td><td>OK</td><td>MAL</td><td>SUST</td>
+        </tr>
+        <tr>
+            <td class="label">RADIADOR</td><td><input type="radio" name="l1a" value="si"></td><td><input type="radio" name="l1a" value="no"></td>
+            <td class="label">TUBERÍAS</td><td><input type="radio" name="l1b" value="ok"></td><td><input type="radio" name="l1b" value="mal"></td><td><input type="radio" name="l1b" value="sust"></td>
+        </tr>
+        <tr>
+            <td class="label">TURBINA REFRIGERACIÓN</td><td><input type="radio" name="l2a" value="si"></td><td><input type="radio" name="l2a" value="no"></td>
+            <td class="label">RACORES</td><td><input type="radio" name="l2b" value="ok"></td><td><input type="radio" name="l2b" value="mal"></td><td><input type="radio" name="l2b" value="sust"></td>
+        </tr>
+        <tr>
+            <td class="label">INTERCAMBIADOR</td><td><input type="radio" name="l3a" value="si"></td><td><input type="radio" name="l3a" value="no"></td>
+            <td class="label">PRESIÓN/Tª ENTRADA AGUA</td><td><input type="radio" name="l3b" value="ok"></td><td><input type="radio" name="l3b" value="mal"></td><td><input type="radio" name="l3b" value="sust"></td>
+        </tr>
+        <tr>
+            <td class="label">TUBERÍAS Y LATIGUILLOS</td><td><input type="radio" name="l4a" value="si"></td><td><input type="radio" name="l4a" value="no"></td>
+            <td class="label">PRESIÓN/Tª SALIDA AGUA</td><td><input type="radio" name="l4b" value="ok"></td><td><input type="radio" name="l4b" value="mal"></td><td><input type="radio" name="l4b" value="sust"></td>
+        </tr>
+        <tr>
+            <td class="label">LIMPIEZA RADIADORES</td><td><input type="radio" name="l5a" value="si"></td><td><input type="radio" name="l5a" value="no"></td>
+            <td class="label">INTERCAMBIADORES</td><td><input type="radio" name="l5b" value="ok"></td><td><input type="radio" name="l5b" value="mal"></td><td><input type="radio" name="l5b" value="sust"></td>
+        </tr>
+    </table>
+
+    <!-- SISTEMA ELÉCTRICO / SECADOR -->
+    <table style="margin-top: 4px;">
+        <tr>
+            <td colspan="3" class="section-header">SISTEMA ELÉCTRICO</td>
+            <td colspan="3" class="section-header">SECADOR</td>
+        </tr>
+        <tr class="sub-header">
+            <td>ESTADO</td><td>OK</td><td>KO</td>
+            <td>COMPROBACIONES</td><td>SI</td><td>NO</td>
+        </tr>
+        <tr>
+            <td class="label">CUADRO</td><td style="text-align:center"><input type="radio" name="e1" value="si"></td><td style="text-align:center"><input type="radio" name="e1" value="no"></td>
+            <td class="label">REAPRIETE DEL CUADRO</td><td style="text-align:center"><input type="radio" name="s1" value="si"></td><td style="text-align:center"><input type="radio" name="s1" value="no"></td>
+        </tr>
+        <tr>
+            <td class="label">VARIADOR</td><td style="text-align:center"><input type="radio" name="e2" value="si"></td><td style="text-align:center"><input type="radio" name="e2" value="no"></td>
+            <td class="label">FUNCIONAMIENTO VARIADOR</td><td style="text-align:center"><input type="radio" name="s2" value="si"></td><td style="text-align:center"><input type="radio" name="s2" value="no"></td>
+        </tr>
+        <tr>
+            <td class="label">PRESOSTATO</td><td style="text-align:center"><input type="radio" name="e3" value="si"></td><td style="text-align:center"><input type="radio" name="e3" value="no"></td>
+            <td class="label">FUNCIONAMIENTO PRESOSTATO</td><td style="text-align:center"><input type="radio" name="s3" value="si"></td><td style="text-align:center"><input type="radio" name="s3" value="no"></td>
+        </tr>
+        <tr>
+            <td class="label">SENSORES/Tª/PRES</td><td style="text-align:center"><input type="radio" name="e4" value="si"></td><td style="text-align:center"><input type="radio" name="e4" value="no"></td>
+            <td class="label">FUNCIONAMIENTO SENSORES</td><td style="text-align:center"><input type="radio" name="s4" value="si"></td><td style="text-align:center"><input type="radio" name="s4" value="no"></td>
+        </tr>
+    </table>
+
+    <!-- TRATAMIENTO AIRE COMPRIMIDO -->
+    <table class="check-table" style="margin-top: 4px;">
+        <tr class="section-header"><td colspan="6">TRATAMIENTO AIRE COMPRIMIDO</td></tr>
+        <tr class="sub-header">
+            <td>ESTADO</td><td>OK</td><td>KO</td>
+            <td>SUSTITUIDO</td><td>SI</td><td>NO</td>
+        </tr>
+        <tr>
+            <td class="label">SECADOR FRIGORÍFICO</td><td><input type="radio" name="t1a" value="si"></td><td><input type="radio" name="t1a" value="no"></td>
+            <td class="label">PURGA</td><td><input type="radio" name="t1b" value="ok"></td><td><input type="radio" name="t1b" value="mal"></td>
+        </tr>
+        <tr>
+            <td class="label">PURGAS</td><td><input type="radio" name="t2a" value="si"></td><td><input type="radio" name="t2a" value="no"></td>
+            <td class="label">OTRAS PURGAS</td><td><input type="radio" name="t2b" value="ok"></td><td><input type="radio" name="t2b" value="mal"></td>
+        </tr>
+        <tr>
+            <td class="label">DEPURADOR DE CONDENSADOS</td><td><input type="radio" name="t3a" value="si"></td><td><input type="radio" name="t3a" value="no"></td>
+            <td class="label">KIT DEPURADOR CONDENSADOS</td><td><input type="radio" name="t3b" value="ok"></td><td><input type="radio" name="t3b" value="mal"></td>
+        </tr>
+        <tr>
+            <td class="label">FILTROS LÍNEA</td><td><input type="radio" name="t4a" value="si"></td><td><input type="radio" name="t4a" value="no"></td>
+            <td class="label">ELEMENTO F LÍNEA</td><td><input type="radio" name="t4b" value="ok"></td><td><input type="radio" name="t4b" value="mal"></td>
+        </tr>
+    </table>
+
+    <!-- TEXTOS LEGALES -->
+    <div class="legal">
+        <p>EMPRESA REPARADORA E INSTALADORA DE EQUIPOS A PRESIÓN AIRCOMVA, S.L.L con n.º 47-ERP1-T-00000006, categoría y razón social en calle CAOBA N.º 2, del POLÍGONO INDUSTRIAL "LA MORA" de LA CISTÉRNIGA, Provincia de VALLADOLID.</p>
+        <p style="margin-top: 3px;">Real Decreto 809/2021. Artículo 9.5 Obligaciones de las usuarias y usuarios.</p>
+    </div>
+
+</div>
+
+<!-- PÁGINA 2 -->
+<div class="page page-break">
+
+    <!-- DATOS DEL EQUIPO -->
+    <table class="equipo-table">
+        <tr class="header-row"><td colspan="2">DATOS DEL EQUIPO</td></tr>
+        <tr class="section-header"><td colspan="2">Nº DE PLACA CCAA / Nº DE PLACA FABRICANTE</td></tr>
+        <tr><td>TITULAR:</td><td><input type="text" id="dup_titular" readonly style="background:#eee; color:#555;"></td></tr>
+        <tr><td>USUARIO:</td><td><input type="text" id="dup_usuario" readonly style="background:#eee; color:#555;"></td></tr>
+        <tr><td>EMPLAZAMIENTO:</td><td><input type="text" id="dup_emplazamiento" readonly style="background:#eee; color:#555;"></td></tr>
+        <tr><td>FABRICANTE / MARCA / MODELO</td><td><input type="text" id="dup_fab_marca_modelo" readonly style="background:#eee; color:#555;"></td></tr>
+        <tr><td>Nº DE FABRICACIÓN/SERIE</td><td><input type="text" id="dup_n_fab_serie" readonly style="background:#eee; color:#555;"></td></tr>
+        <tr><td>Nº DE CÁMARAS</td><td><input type="text" name="n_camaras"></td></tr>
+        <tr><td>PMS (MÁXIMA DE SERVICIO) &le; PP (PRECINTO) &le; PS (MÁXIMA ADMISIBLE)</td><td><input type="text" name="pms" placeholder="____  ≤  ____   ≤  ____"></td></tr>
+        <tr><td>PRESIÓN DE PRUEBA PT (BAR)</td><td><input type="text" name="pt_bar"></td></tr>
+        <tr><td>TMS (MÁXIMA DE SERVICIO) &le; TS (MÁXIMA ADMISIBLE)</td><td><input type="text" name="tms" placeholder="____  ≤  ____"></td></tr>
+        <tr><td>VOLUMEN (L)</td><td><input type="text" name="volumen"></td></tr>
+        <tr><td>POTENCIA TÉRMICA (KW)</td><td><input type="text" name="potencia"></td></tr>
+        <tr><td>DIÁMETRO NOMINAL DN (PULGADAS)</td><td><input type="text" name="diametro"></td></tr>
+        <tr><td>FLUÍDO CONTENIDO (ESTADO Y GRUPO)</td><td><input type="text" name="fluido"></td></tr>
+        <tr><td>CATEGORÍA DE EQUIPO SEGÚN DEP (RD 709/2015)</td><td><input type="text" name="categoria"></td></tr>
+    </table>
+
+    <!-- INSPECCIÓN -->
+    <table class="insp-table" style="margin-top: 6px;">
+        <tr class="sub-header">
+            <td></td><td></td><td>N/A</td><td>SD</td><td>DL</td><td>DG</td>
+        </tr>
+
+        <!-- Estado superficial -->
+        <tr class="section-header"><td colspan="6">ESTADO SUPERFICIAL</td></tr>
+        <tr>
+            <td colspan="2" class="label">AUSENCIA DE CORROSIÓN</td>
+            <td style="text-align:center"><input type="radio" name="i1" value="na"></td>
+            <td style="text-align:center"><input type="radio" name="i1" value="sd"></td>
+            <td style="text-align:center"><input type="radio" name="i1" value="dl"></td>
+            <td style="text-align:center"><input type="radio" name="i1" value="dg"></td>
+        </tr>
+        <tr>
+            <td colspan="2" class="label">CONSERVACIÓN Y CORRECTO ESTADO DEL CALORIFUGADO</td>
+            <td style="text-align:center"><input type="radio" name="i2" value="na"></td>
+            <td style="text-align:center"><input type="radio" name="i2" value="sd"></td>
+            <td style="text-align:center"><input type="radio" name="i2" value="dl"></td>
+            <td style="text-align:center"><input type="radio" name="i2" value="dg"></td>
+        </tr>
+        <tr>
+            <td colspan="2" class="label">PLACA DEL EQUIPO (FABRICACIÓN)</td>
+            <td style="text-align:center"><input type="radio" name="i3" value="na"></td>
+            <td style="text-align:center"><input type="radio" name="i3" value="sd"></td>
+            <td style="text-align:center"><input type="radio" name="i3" value="dl"></td>
+            <td style="text-align:center"><input type="radio" name="i3" value="dg"></td>
+        </tr>
+        <tr>
+            <td colspan="2" class="label">PLACA DEL EQUIPO (CCAA; INSPECCIONES)</td>
+            <td style="text-align:center"><input type="radio" name="i4" value="na"></td>
+            <td style="text-align:center"><input type="radio" name="i4" value="sd"></td>
+            <td style="text-align:center"><input type="radio" name="i4" value="dl"></td>
+            <td style="text-align:center"><input type="radio" name="i4" value="dg"></td>
+        </tr>
+
+        <!-- Bancada -->
+        <tr class="section-header"><td colspan="6">BANCADA</td></tr>
+        <tr>
+            <td colspan="2" class="label">ESTADO DE ANCLAJES. OXIDACIÓN, GRIETAS...</td>
+            <td style="text-align:center"><input type="radio" name="i5" value="na"></td>
+            <td style="text-align:center"><input type="radio" name="i5" value="sd"></td>
+            <td style="text-align:center"><input type="radio" name="i5" value="dl"></td>
+            <td style="text-align:center"><input type="radio" name="i5" value="dg"></td>
+        </tr>
+        <tr>
+            <td colspan="2" class="label">VIBRACIONES</td>
+            <td style="text-align:center"><input type="radio" name="i6" value="na"></td>
+            <td style="text-align:center"><input type="radio" name="i6" value="sd"></td>
+            <td style="text-align:center"><input type="radio" name="i6" value="dl"></td>
+            <td style="text-align:center"><input type="radio" name="i6" value="dg"></td>
+        </tr>
+
+        <!-- Ausencia de fugas -->
+        <tr class="section-header"><td colspan="6">AUSENCIA DE FUGAS</td></tr>
+        <tr>
+            <td colspan="2" class="label">BRIDAS</td>
+            <td style="text-align:center"><input type="radio" name="i7" value="na"></td>
+            <td style="text-align:center"><input type="radio" name="i7" value="sd"></td>
+            <td style="text-align:center"><input type="radio" name="i7" value="dl"></td>
+            <td style="text-align:center"><input type="radio" name="i7" value="dg"></td>
+        </tr>
+        <tr>
+            <td colspan="2" class="label">UNIONES</td>
+            <td style="text-align:center"><input type="radio" name="i8" value="na"></td>
+            <td style="text-align:center"><input type="radio" name="i8" value="sd"></td>
+            <td style="text-align:center"><input type="radio" name="i8" value="dl"></td>
+            <td style="text-align:center"><input type="radio" name="i8" value="dg"></td>
+        </tr>
+        <tr>
+            <td colspan="2" class="label">VÁLVULAS</td>
+            <td style="text-align:center"><input type="radio" name="i9" value="na"></td>
+            <td style="text-align:center"><input type="radio" name="i9" value="sd"></td>
+            <td style="text-align:center"><input type="radio" name="i9" value="dl"></td>
+            <td style="text-align:center"><input type="radio" name="i9" value="dg"></td>
+        </tr>
+
+        <!-- Funcionamiento instrumentación -->
+        <tr class="section-header"><td colspan="6">FUNCIONAMIENTO DE LA INSTRUMENTACIÓN</td></tr>
+        <tr>
+            <td colspan="2" class="label">ESTADO MANÓMETRO/S</td>
+            <td style="text-align:center"><input type="radio" name="i10" value="na"></td>
+            <td style="text-align:center"><input type="radio" name="i10" value="sd"></td>
+            <td style="text-align:center"><input type="radio" name="i10" value="dl"></td>
+            <td style="text-align:center"><input type="radio" name="i10" value="dg"></td>
+        </tr>
+        <tr>
+            <td colspan="2" class="label">ESTADO TERMÓMETRO/S</td>
+            <td style="text-align:center"><input type="radio" name="i11" value="na"></td>
+            <td style="text-align:center"><input type="radio" name="i11" value="sd"></td>
+            <td style="text-align:center"><input type="radio" name="i11" value="dl"></td>
+            <td style="text-align:center"><input type="radio" name="i11" value="dg"></td>
+        </tr>
+
+        <!-- Seguridades -->
+        <tr class="section-header"><td colspan="6">SEGURIDADES</td></tr>
+        <tr>
+            <td colspan="2" class="label">ESTADO TERMOSTATO/S</td>
+            <td style="text-align:center"><input type="radio" name="i12" value="na"></td>
+            <td style="text-align:center"><input type="radio" name="i12" value="sd"></td>
+            <td style="text-align:center"><input type="radio" name="i12" value="dl"></td>
+            <td style="text-align:center"><input type="radio" name="i12" value="dg"></td>
+        </tr>
+        <tr>
+            <td colspan="2" class="label">ESTADO PRESOSTATO/S</td>
+            <td style="text-align:center"><input type="radio" name="i13" value="na"></td>
+            <td style="text-align:center"><input type="radio" name="i13" value="sd"></td>
+            <td style="text-align:center"><input type="radio" name="i13" value="dl"></td>
+            <td style="text-align:center"><input type="radio" name="i13" value="dg"></td>
+        </tr>
+        <tr>
+            <td colspan="2" class="label">ESTADO NIVOSTATO/S</td>
+            <td style="text-align:center"><input type="radio" name="i14" value="na"></td>
+            <td style="text-align:center"><input type="radio" name="i14" value="sd"></td>
+            <td style="text-align:center"><input type="radio" name="i14" value="dl"></td>
+            <td style="text-align:center"><input type="radio" name="i14" value="dg"></td>
+        </tr>
+
+        <!-- Válvula de seguridad -->
+        <tr class="section-header"><td colspan="6">VÁLVULA DE SEGURIDAD</td></tr>
+        <tr>
+            <td colspan="2" class="label">PRECINTADO</td>
+            <td style="text-align:center"><input type="radio" name="i15" value="na"></td>
+            <td style="text-align:center"><input type="radio" name="i15" value="sd"></td>
+            <td style="text-align:center"><input type="radio" name="i15" value="dl"></td>
+            <td style="text-align:center"><input type="radio" name="i15" value="dg"></td>
+        </tr>
+        <tr>
+            <td colspan="2" class="label">AUSENCIA DE FUGAS</td>
+            <td style="text-align:center"><input type="radio" name="i16" value="na"></td>
+            <td style="text-align:center"><input type="radio" name="i16" value="sd"></td>
+            <td style="text-align:center"><input type="radio" name="i16" value="dl"></td>
+            <td style="text-align:center"><input type="radio" name="i16" value="dg"></td>
+        </tr>
+        <tr>
+            <td colspan="2" class="label">PLACA</td>
+            <td style="text-align:center"><input type="radio" name="i17" value="na"></td>
+            <td style="text-align:center"><input type="radio" name="i17" value="sd"></td>
+            <td style="text-align:center"><input type="radio" name="i17" value="dl"></td>
+            <td style="text-align:center"><input type="radio" name="i17" value="dg"></td>
+        </tr>
+
+        <!-- Niveles -->
+        <tr class="section-header"><td colspan="6">NIVELES</td></tr>
+        <tr>
+            <td colspan="2" class="label">ESTADO</td>
+            <td style="text-align:center"><input type="radio" name="i18" value="na"></td>
+            <td style="text-align:center"><input type="radio" name="i18" value="sd"></td>
+            <td style="text-align:center"><input type="radio" name="i18" value="dl"></td>
+            <td style="text-align:center"><input type="radio" name="i18" value="dg"></td>
+        </tr>
+        <tr>
+            <td colspan="2" class="label">PURGA</td>
+            <td style="text-align:center"><input type="radio" name="i19" value="na"></td>
+            <td style="text-align:center"><input type="radio" name="i19" value="sd"></td>
+            <td style="text-align:center"><input type="radio" name="i19" value="dl"></td>
+            <td style="text-align:center"><input type="radio" name="i19" value="dg"></td>
+        </tr>
+
+        <!-- Condensados -->
+        <tr class="section-header"><td colspan="6">CONDENSADOS</td></tr>
+        <tr>
+            <td colspan="2" class="label">PURGA</td>
+            <td style="text-align:center"><input type="radio" name="i20" value="na"></td>
+            <td style="text-align:center"><input type="radio" name="i20" value="sd"></td>
+            <td style="text-align:center"><input type="radio" name="i20" value="dl"></td>
+            <td style="text-align:center"><input type="radio" name="i20" value="dg"></td>
+        </tr>
+    </table>
+
+    <!-- RESULTADO -->
+    <table style="margin-top: 10px;">
+        <tr>
+            <td class="header-row" colspan="6">
+                RESULTADO: <input type="text" name="resultado" style="width: 70%; border-bottom: 1px solid #333;">
+            </td>
+        </tr>
+    </table>
+
+    <!-- OBSERVACIONES -->
+    <table style="margin-top: 4px;">
+        <tr class="section-header"><td>OBSERVACIONES</td></tr>
+        <tr><td style="padding: 0;"><textarea rows="4" name="observaciones" style="min-height: 50px; height: 50px;"></textarea></td></tr>
+    </table>
+
+    <!-- FIRMA TÁCTIL -->
+    <div class="firma-section" style="margin-top: 20px;">
+        <p><strong>Firmado:</strong></p>
+        <div style="position: relative; margin-top: 6px;">
+            <canvas id="firmaCanvas" width="500" height="180"
+                style="border: 1px solid #999; border-radius: 4px; background: #fafafa; touch-action: none; cursor: crosshair; width: 100%; max-width: 500px;">
+            </canvas>
+            <br>
+            <button type="button" onclick="limpiarFirma()" style="
+                margin-top: 6px; padding: 4px 16px; font-size: 8pt;
+                font-family: Calibri, Arial, sans-serif; cursor: pointer;
+                background: #e74c3c; color: #fff; border: none; border-radius: 3px;
+            ">Borrar firma</button>
+        </div>
+    </div>
+
+</div>
+
+<script>
+(function() {
+    const canvas = document.getElementById('firmaCanvas');
+    const ctx = canvas.getContext('2d');
+    let dibujando = false;
+    let ultimoX = 0, ultimoY = 0;
+
+    function ajustarResolucion() {
+        const rect = canvas.getBoundingClientRect();
+        const dpr = window.devicePixelRatio || 1;
+        canvas.width = rect.width * dpr;
+        canvas.height = rect.height * dpr;
+        ctx.scale(dpr, dpr);
+        ctx.lineWidth = 2;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.strokeStyle = '#222';
+    }
+    ajustarResolucion();
+
+    function obtenerPos(e) {
+        const rect = canvas.getBoundingClientRect();
+        const touch = e.touches ? e.touches[0] : e;
+        return {
+            x: touch.clientX - rect.left,
+            y: touch.clientY - rect.top
+        };
+    }
+
+    function iniciar(e) {
+        e.preventDefault();
+        dibujando = true;
+        const pos = obtenerPos(e);
+        ultimoX = pos.x;
+        ultimoY = pos.y;
+        ctx.beginPath();
+        ctx.moveTo(pos.x, pos.y);
+    }
+
+    function dibujar(e) {
+        if (!dibujando) return;
+        e.preventDefault();
+        const pos = obtenerPos(e);
+        ctx.beginPath();
+        ctx.moveTo(ultimoX, ultimoY);
+        ctx.lineTo(pos.x, pos.y);
+        ctx.stroke();
+        ultimoX = pos.x;
+        ultimoY = pos.y;
+    }
+
+    function detener(e) {
+        if (dibujando) {
+            e.preventDefault();
+            dibujando = false;
+        }
+    }
+
+    canvas.addEventListener('touchstart', iniciar, { passive: false });
+    canvas.addEventListener('touchmove', dibujar, { passive: false });
+    canvas.addEventListener('touchend', detener);
+    canvas.addEventListener('touchcancel', detener);
+
+    canvas.addEventListener('mousedown', iniciar);
+    canvas.addEventListener('mousemove', dibujar);
+    canvas.addEventListener('mouseup', detener);
+    canvas.addEventListener('mouseleave', detener);
+
+    window.limpiarFirma = function() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    };
+
+    window.borrarFormulario = function() {
+        document.querySelectorAll('input[type="text"]').forEach(function(el) { el.value = ''; });
+        document.querySelectorAll('input[type="radio"]').forEach(function(el) { el.checked = false; });
+        document.querySelectorAll('textarea').forEach(function(el) { el.value = ''; });
+        window.limpiarFirma();
+    };
+})();
+</script>
+
+<script>
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./sw.js');
+}
+</script>
+
+</body>
+</html>
