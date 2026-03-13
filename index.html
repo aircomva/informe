@@ -103,12 +103,12 @@
             .client-table td { padding: 0.5px 2px; }
             input[type="text"] { font-size: 7pt; border-bottom: none; padding: 0; }
             input[type="radio"] { transform: scale(0.7); margin: 0; }
-            textarea { min-height: 50px; height: 50px; font-size: 7pt; border: 1px solid #ccc; padding: 2px; }
+            textarea { min-height: 60px; height: 60px; font-size: 7pt; border: 1px solid #ccc; padding: 2px; }
             .equipo-table td { padding: 0.5px 2px; font-size: 6.5pt; }
             .insp-table td { padding: 0.5px 2px; font-size: 6.5pt; }
-            canvas { max-height: 80px; }
+            canvas { max-height: 50px; }
             button[onclick="limpiarFirma()"] { display: none !important; }
-            .firma-section { margin-top: 5px !important; }
+            .firma-section { margin-top: 2px !important; }
             .page {
                 max-height: 284mm; overflow: hidden;
                 page-break-inside: avoid;
@@ -530,10 +530,10 @@
     </table>
 
     <!-- FIRMA TÁCTIL -->
-    <div class="firma-section" style="margin-top: 20px;">
+    <div class="firma-section" style="margin-top: 10px;">
         <p><strong>Firmado:</strong></p>
-        <div style="position: relative; margin-top: 6px;">
-            <canvas id="firmaCanvas" width="500" height="180"
+        <div style="position: relative; margin-top: 4px;">
+            <canvas id="firmaCanvas" width="500" height="120"
                 style="border: 1px solid #999; border-radius: 4px; background: #fafafa; touch-action: none; cursor: crosshair; width: 100%; max-width: 500px;">
             </canvas>
             <br>
