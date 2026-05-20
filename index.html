@@ -625,6 +625,19 @@
         document.querySelectorAll('textarea').forEach(function(el) { el.value = ''; });
         window.limpiarFirma();
     };
+
+    // Permitir deseleccionar un radio haciendo click de nuevo sobre la opción ya marcada
+    document.querySelectorAll('input[type="radio"]').forEach(function(radio) {
+        radio.addEventListener('pointerdown', function() {
+            this._wasChecked = this.checked;
+        });
+        radio.addEventListener('click', function() {
+            if (this._wasChecked) {
+                this.checked = false;
+            }
+            this._wasChecked = this.checked;
+        });
+    });
 })();
 </script>
 
