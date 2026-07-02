@@ -35,6 +35,36 @@
         }
         .btn-borrar-todo:hover { background: #c0392b; }
 
+        /* Ventana de confirmacion de borrado */
+        .modal-overlay {
+            display: none;
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 2000;
+            background: rgba(0,0,0,0.5);
+            align-items: center; justify-content: center;
+            padding: 20px;
+        }
+        .modal-overlay.visible { display: flex; }
+        .modal-box {
+            background: #fff; border-radius: 10px; padding: 28px 24px;
+            max-width: 420px; width: 100%; text-align: center;
+            box-shadow: 0 6px 24px rgba(0,0,0,0.35);
+        }
+        .modal-box .modal-text {
+            font-size: 15pt; color: #333; margin-bottom: 28px; line-height: 1.4;
+        }
+        .modal-buttons {
+            display: flex; gap: 24px; justify-content: center;
+        }
+        .modal-buttons button {
+            flex: 1; padding: 22px 10px; font-size: 16pt; font-weight: bold;
+            font-family: Calibri, Arial, sans-serif; border: none; border-radius: 8px;
+            cursor: pointer; color: #fff; min-height: 70px;
+        }
+        .btn-modal-si { background: #e74c3c; }
+        .btn-modal-si:hover { background: #c0392b; }
+        .btn-modal-no { background: #7f8c8d; }
+        .btn-modal-no:hover { background: #626d6e; }
+
         .title-area {
             background: #4472c4; color: #fff; text-align: center;
             font-size: 14pt; font-weight: bold; padding: 12px; height: 50px;
@@ -91,7 +121,7 @@
             body { background: #fff; font-size: 7pt; }
             .page { box-shadow: none; margin: 0; padding: 2mm 3mm; width: 100%; }
             .page-break { page-break-before: always; }
-            .btn-borrar-todo, .btn-imprimir { display: none !important; }
+            .btn-borrar-todo, .btn-imprimir, .modal-overlay { display: none !important; }
             table { margin-bottom: 0; }
             td, th { padding: 0.5px 2px; font-size: 7pt; line-height: 1.1; }
             .title-area { height: 24px; font-size: 10pt; padding: 2px; }
@@ -120,6 +150,17 @@
 
 <button type="button" class="btn-imprimir" onclick="window.print()">Imprimir / PDF</button>
 <button type="button" class="btn-borrar-todo" onclick="borrarFormulario()">Borrar formulario</button>
+
+<!-- Ventana de confirmacion de borrado -->
+<div class="modal-overlay" id="modalBorrar">
+    <div class="modal-box">
+        <div class="modal-text">¿Está seguro de que quiere borrar<br>todo el formulario?</div>
+        <div class="modal-buttons">
+            <button type="button" class="btn-modal-si" onclick="confirmarBorrado()">Sí, borrar</button>
+            <button type="button" class="btn-modal-no" onclick="cancelarBorrado()">No</button>
+        </div>
+    </div>
+</div>
 
 <div class="page">
 
@@ -619,7 +660,19 @@
         ctx.clearRect(0, 0, canvas.width, canvas.height);
     };
 
+    // Borrar todo el formulario: primero pide confirmacion
     window.borrarFormulario = function() {
+        document.getElementById('modalBorrar').classList.add('visible');
+    };
+
+    // El usuario pulsa "No": cierra la ventana y deja todo como estaba
+    window.cancelarBorrado = function() {
+        document.getElementById('modalBorrar').classList.remove('visible');
+    };
+
+    // El usuario pulsa "Si": cierra la ventana y borra el formulario
+    window.confirmarBorrado = function() {
+        document.getElementById('modalBorrar').classList.remove('visible');
         document.querySelectorAll('input[type="text"]').forEach(function(el) { el.value = ''; });
         document.querySelectorAll('input[type="radio"]').forEach(function(el) { el.checked = false; });
         document.querySelectorAll('textarea').forEach(function(el) { el.value = ''; });
