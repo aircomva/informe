@@ -700,5 +700,26 @@ if ('serviceWorker' in navigator) {
 }
 </script>
 
+<script>
+// Registro de visitas e impresiones (se guarda en la hoja "Registro informe" de Google Drive)
+(function () {
+    var URL_REGISTRO = 'https://script.google.com/macros/s/AKfycbxQZHAZgsEG7bHCtuB79L-pA1sSh6zuvMRBAEO_ebdSwDNglwerh4rTNzGokhgdpZ3v/exec';
+    var dispositivo = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent) ? 'Móvil' : 'Ordenador';
+    function registrar(tipo) {
+        try {
+            var datos = new URLSearchParams({ tipo: tipo, ua: dispositivo });
+            if (!(navigator.sendBeacon && navigator.sendBeacon(URL_REGISTRO, datos))) {
+                fetch(URL_REGISTRO, { method: 'POST', mode: 'no-cors', body: datos, keepalive: true });
+            }
+        } catch (e) {}
+    }
+    registrar('visita');
+    var ultimaImpresion = 0;
+    window.addEventListener('beforeprint', function () {
+        var ahora = Date.now();
+        if (ahora - ultimaImpresion > 2000) { ultimaImpresion = ahora; registrar('imprimir'); }
+    });
+})();
+</script>
 </body>
 </html>
