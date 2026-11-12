@@ -709,7 +709,7 @@ if ('serviceWorker' in navigator) {
         try {
             var datos = new URLSearchParams({ tipo: tipo, ua: dispositivo });
             if (!(navigator.sendBeacon && navigator.sendBeacon(URL_REGISTRO, datos))) {
-                fetch(URL_REGISTRO, { method: 'POST', mode: 'no-cors', body: datos, keepalive: true });
+                fetch(URL_REGISTRO, { method: 'POST', mode: 'no-cors', body: datos, keepalive: true }).catch(function () {});
             }
         } catch (e) {}
     }
